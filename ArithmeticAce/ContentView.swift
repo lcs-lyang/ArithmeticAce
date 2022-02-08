@@ -10,8 +10,9 @@ import SwiftUI
 struct ContentView: View {
     
     // MARK: Stored properties
-    let multiplicand = Int.random(in: 1...12)
-    let multiplier = Int.random(in: 1...12)
+    @State var multiplicand = Int.random(in: 1...12)
+    @State var multiplier = Int.random(in: 1...12)
+    //This string contains whatever the user types in
     @State var inputGiven = ""
     
     // Has an answer been checked?
@@ -29,6 +30,7 @@ struct ContentView: View {
     var body: some View {
                 
         VStack(spacing: 0) {
+            
             HStack {
                 Text("✕")
                 
@@ -43,15 +45,27 @@ struct ContentView: View {
             Divider()
             
             HStack {
-                Image(systemName: "checkmark.circle")
-                    .foregroundColor(.green)
-                    //        CONDITION      true  false
-                    .opacity(answerCorrect ? 1.0 : 0.0)
-                Spacer()
-                TextField("",
-                          text: $inputGiven)
-                    .multilineTextAlignment(.trailing)
-            }
+                ZStack {
+                    Image(systemName: "checkmark.circle")
+                        .foregroundColor(.green)
+                        //        CONDITION      true  false
+                        .opacity(answerCorrect == true ? 1.0 : 0.0)
+                    
+                    Image(systemName: "x.square")
+                        .foregroundColor(.red)
+                    //            Condition 1 and  Condition2      true  false
+                    //            answerchecked = true   answerCorrect = false
+                        .opacity(answerChecked && answerCorrect == false ? 1.0 : 0.0)
+                    
+                    //you can also do !answerCorrect; ! means to make the variable the opposite
+                    
+                }
+                    Spacer()
+                    TextField("",
+                              text: $inputGiven)
+                        .multilineTextAlignment(.trailing)
+                }
+            
             
             Button(action: {
                 
@@ -79,14 +93,42 @@ struct ContentView: View {
             })
                 .padding()
                 .buttonStyle(.bordered)
+                .opacity(answerCorrect ? 0.0 : 1.0)
+            
+            Button(action: {
+                //generate a new question
+                multiplicand = Int.random(in: 1...12)
+                multiplier = Int.random(in: 1...12)
+                //reset properties that track what's happening with the current question
+                answerCorrect = false
+                answerChecked = false
+                
+                //Reset the input given
+                inputGiven = ""
+
+            }, label: {
+                Text("New Question")
+                    .font(.largeTitle)
+
+            })
+                .opacity(answerCorrect ? 1.0 : 0.0)
+                .padding()
+                .buttonStyle(.bordered)
+            
             
             Spacer()
         }
-        .padding(.horizontal)
-        .font(.system(size: 72))
+           
+        
+    .padding(.horizontal)
+    .font(.system(size: 72))
+
 
         
     }
+    
+    
+
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -94,3 +136,5 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
